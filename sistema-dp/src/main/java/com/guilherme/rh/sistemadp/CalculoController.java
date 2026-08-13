@@ -9,33 +9,52 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class CalculoController {
 
-    @GetMapping("/status")
-    public String statusServidor() {
-        return "{\"mensagem\": \"Servidor Java rodando e pronto para receber cálculos!\"}";
-    }
-
     public static class DadosFuncionario {
         public double salarioBase;
         public int mesesTrabalhados;
+        public String tipoDemissao;
+        public String avisoPrevio;
     }
 
     @PostMapping("/calcular")
     public Map<String, Object> calcularRescisao(@RequestBody DadosFuncionario dados) {
 
+        // 1. CÁLCULO BASE DE PROVENTOS
         double decimoTerceiro = (dados.salarioBase / 12) * dados.mesesTrabalhados;
         double feriasProporcionais = (dados.salarioBase / 12) * dados.mesesTrabalhados;
         double tercoFerias = feriasProporcionais / 3.0;
 
-        double total = decimoTerceiro + feriasProporcionais + tercoFerias;
+        // 2. REGRAS DE AVISO PRÉVIO
+        double valorAvisoPrevio = 0.0;
+        // Se a empresa demitiu e mandou indenizar, ela paga +1 salário base
+        if ("Sem Justa Causa".equals(dados.tipoDemissao) && "Indenizado".equals(dados.avisoPrevio)) {
+            valorAvisoPrevio = dados.salarioBase;
+        }
 
-        // O Map do Java é convertido automaticamente para JSON pelo Spring Boot
+        // 3. REGRAS DE FGTS E MULTA
+        double saldoFgts = (dados.salarioBase * 0.08) * dados.mesesTrabalhados;
+        double multaFgts = 0.0;
+        // Só tem multa de 40% se a empresa demitiu sem justa causa
+        if ("Sem Justa Causa".equals(dados.tipoDemissao)) {
+            multaFgts = saldoFgts * 0.40;
+        }
+
+        // 4. DESCONTOS (Simulação de INSS sobre 13º e Aviso)
+        double descontoInss = (decimoTerceiro) * 0.09;
+
+        // 5. FECHAMENTO DO TOTAL LÍQUIDO A RECEBER (Não inclui FGTS, pois o saque é na Caixa)
+        double proventos = decimoTerceiro + feriasProporcionais + tercoFerias + valorAvisoPrevio;
+        double totalLiquido = proventos - descontoInss;
+
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("decimoTerceiro", decimoTerceiro);
         resultado.put("ferias", feriasProporcionais);
         resultado.put("tercoFerias", tercoFerias);
-        resultado.put("totalRescisao", total);
-
-        System.out.println("Cálculo realizado com sucesso para o salário de R$ " + dados.salarioBase);
+        resultado.put("avisoPrevio", valorAvisoPrevio);
+        resultado.put("saldoFgts", saldoFgts);
+        resultado.put("multaFgts", multaFgts);
+        resultado.put("descontoInss", descontoInss);
+        resultado.put("totalRescisao", totalLiquido);
 
         return resultado;
     }

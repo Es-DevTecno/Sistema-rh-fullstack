@@ -12,14 +12,14 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary   : #5E35B1; /* Roxo principal */
-$secondary : #FF7043; /* Coral para detalhes */
-$positive  : #43A047; /* Verde para sucesso/WhatsApp */
+// src/css/quasar.variables.scss
 
-$dark: #1d1d1d;
-$dark-page: #121212;
+$primary   : #2B3036; // Grafite Escuro
+$secondary : #C08A7C; // Rose Gold / Bronze
+$accent    : #5D7990; // Azul Metálico
 
-$positive: #21ba45;
-$negative: #c10015;
-$info: #31ccec;
-$warning: #f2c037;
+$dark      : #1D1D1D;
+$positive  : #21BA45;
+$negative  : #C10015;
+$info      : #31CCEC;
+$warning   : #F2C037;

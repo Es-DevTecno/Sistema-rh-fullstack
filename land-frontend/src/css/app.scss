@@ -1,1 +1,58 @@
-// app global css
+// ==========================================
+// GGFV DESIGN SYSTEM - ADVANCED BENTO GRID
+// ==========================================
+
+.bento-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  // Quebra automática para dispositivos móveis
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bento-card {
+  position: relative;
+  background: #1e2227;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+  border-color 0.4s ease,
+  box-shadow 0.4s ease;
+
+  // Efeito Spotlight dinâmico via variáveis de mouse
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+            800px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+            rgba(192, 138, 124, 0.18),
+            transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    border-color: rgba(192, 138, 124, 0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  // Recurso avançado com suporte a inputs nativos e classes
+  &:has(input:focus, select:focus, .q-field--focused) {
+    border-color: #C08A7C !important;
+    box-shadow: 0 0 25px rgba(192, 138, 124, 0.25);
+  }
+}
