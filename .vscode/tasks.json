@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "java25-backend-compile",
+			"type": "shell",
+			"command": "Set-Location backend; .\\mvnw.cmd clean test-compile -q",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}
