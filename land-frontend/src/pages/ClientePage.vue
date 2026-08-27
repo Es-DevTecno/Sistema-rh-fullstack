@@ -11,7 +11,7 @@
         <p class="text-grey-7 text-subtitle2">Acesse sua área exclusiva para ver folha e documentos</p>
       </div>
 
-      <!-- Cartão de Acesso -->
+
       <q-card flat bordered class="q-pa-lg bg-white shadow-2" style="border-top: 4px solid var(--q-secondary); border-radius: 12px;">
         <q-form @submit.prevent="fazerLogin" class="q-gutter-y-md">
 
@@ -50,14 +50,13 @@
               size="lg"
               label="Entrar na Área do Cliente"
               class="full-width text-weight-bold"
+              :loading="carregando"
+              :disabled="carregando"
             />
           </div>
 
         </q-form>
 
-        <div class="text-center q-mt-md">
-          <a href="#" class="text-caption text-secondary" style="text-decoration: none;">Esqueceu sua senha?</a>
-        </div>
       </q-card>
 
       <!-- Botão de Voltar -->
@@ -73,17 +72,40 @@
 <script setup>
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 
 const $q = useQuasar()
+const router = useRouter()
 const cnpj = ref('')
 const senha = ref('')
+const carregando = ref(false)
 
-const fazerLogin = () => {
-  // Simulação de login (aqui você pode integrar com seu backend Java/Spring Boot futuramente)
-  $q.notify({
-    color: 'positive',
-    message: 'Funcionalidade em desenvolvimento para conectar ao servidor!',
-    icon: 'check'
-  })
+const fazerLogin = async () => {
+  carregando.value = true
+
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+    const resposta = await fetch(`${apiUrl}/api/clientes/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cnpj: cnpj.value, senha: senha.value })
+    })
+    const mensagem = await resposta.text()
+
+    if (!resposta.ok) {
+      throw new Error(mensagem || 'CNPJ ou senha inválidos.')
+    }
+
+$q.notify({ color: 'positive', message: 'Acesso liberado!', icon: 'check' })
+    await router.push('/dashboard-cliente')
+  } catch (erro) {
+    $q.notify({
+      color: 'negative',
+      message: erro.message || 'Não foi possível conectar ao servidor.',
+      icon: 'error'
+    })
+  } finally {
+    carregando.value = false
+  }
 }
 </script>

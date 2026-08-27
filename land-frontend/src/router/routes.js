@@ -8,6 +8,7 @@ const routes = [
       { path: 'quem-somos', component: () => import('../pages/QuemSomos.vue') },
       { path: 'contato', component: () => import('../pages/ContatoPage.vue') },
       { path: 'area-cliente', component: () => import('../pages/ClientePage.vue') },
+      { path: 'dashboard-cliente', component: () => import('../pages/DashboardCliente.vue') },
     ]
   },
   {
